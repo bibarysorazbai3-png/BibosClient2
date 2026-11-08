@@ -578,3 +578,100 @@ class ClickerService : AccessibilityService() {
                 field = value
                 invalidate()
             }
+        var active: Boolean = false
+            set(value) {
+                field = value
+                invalidate()
+            }
+        private val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.FILL
+            color = 0x99000000.toInt()
+        }
+        private val ring = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+        }
+        private val badge = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.FILL
+            color = 0xCC000000.toInt()
+        }
+        private val text = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = 0xFFFFFFFF.toInt()
+            textAlign = Paint.Align.CENTER
+            typeface = Typeface.DEFAULT_BOLD
+        }
+
+        override fun onDraw(canvas: Canvas) {
+            val cx = width / 2f
+            val cy = height / 2f
+            val r = minOf(width, height) / 2f - 4f
+            ring.strokeWidth = maxOf(3f, r * 0.07f)
+            ring.color = if (active) 0xFF2ECC71.toInt() else 0xFFFFFFFF.toInt()
+            canvas.drawCircle(cx, cy, r, fill)
+            canvas.drawCircle(cx, cy, r, ring)
+            val mw = r * 0.26f
+            val mh = r * 0.42f
+            canvas.drawRoundRect(RectF(cx - mw, cy - mh, cx + mw, cy + mh), mw, mw, ring)
+            canvas.drawLine(cx, cy - mh, cx, cy - mh * 0.2f, ring)
+            if (label.isNotEmpty()) {
+                val bx = cx + r * 0.72f
+                val by = cy + r * 0.72f
+                val br = r * 0.34f
+                canvas.drawCircle(bx, by, br, badge)
+                canvas.drawCircle(bx, by, br, ring)
+                text.textSize = br * 1.0f
+                canvas.drawText(label, bx, by + text.textSize * 0.35f, text)
+            }
+        }
+    }
+
+    // Красный прицел: сюда попадают клики
+    private class TargetView(c: Context) : View(c) {
+        private val ring = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = 4f
+            color = 0xFFFF3B30.toInt()
+        }
+        private val dot = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.FILL
+            color = 0xFFFF3B30.toInt()
+        }
+
+        override fun onDraw(canvas: Canvas) {
+            val cx = width / 2f
+            val cy = height / 2f
+            val r = minOf(width, height) / 2f - 4f
+            canvas.drawCircle(cx, cy, r, ring)
+            canvas.drawLine(cx - r, cy, cx + r, cy, ring)
+            canvas.drawLine(cx, cy - r, cx, cy + r, ring)
+            canvas.drawCircle(cx, cy, 5f, dot)
+        }
+    }
+
+    // Кружок меню (как значок панды в Panda Touch Pro)
+    private class BubbleView(c: Context) : View(c) {
+        private val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.FILL
+            color = 0xF21A1033.toInt()
+        }
+        private val ring = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = 5f
+            color = 0xFF7C4DFF.toInt()
+        }
+        private val text = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = 0xFFFFFFFF.toInt()
+            textAlign = Paint.Align.CENTER
+            typeface = Typeface.DEFAULT_BOLD
+        }
+
+        override fun onDraw(canvas: Canvas) {
+            val cx = width / 2f
+            val cy = height / 2f
+            val r = minOf(width, height) / 2f - 4f
+            canvas.drawCircle(cx, cy, r, fill)
+            canvas.drawCircle(cx, cy, r, ring)
+            text.textSize = r * 1.1f
+            canvas.drawText("B", cx, cy + text.textSize * 0.35f, text)
+        }
+    }
+}
