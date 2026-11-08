@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Bibos Client</string>
+    <string name="service_desc">Выполняет автоматические нажатия в выбранной точке экрана.</string>
+</resources>
